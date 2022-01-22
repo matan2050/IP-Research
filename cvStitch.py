@@ -39,6 +39,15 @@ def GenerateHomographyTform(kp1, kp2, matches, minimal_matches, maximal_dist):
     H, mask = cv2.findHomography(src, dst, cv2.RANSAC, maximal_dist)
     return H
     
-def Stitch(img1, img2, H):
+def CalculateNewBounds(img, H):
+    start = [[0,0,1]]
+    end = [[img.shape[0], img.shape[1],1]]
+    startTform = np.matmul(H, start)
+    endTform = np.matmul(H, end)
     
+    startTformFix = [[startTform[0] / startTform[2], startTform[1] / startTform[2]]]
+    endTformFix = [[endTform[0] / endTform[2], endTform[1] / endTform[2]]]
+    return startTformFix, endTformFix
+    
+def Stitch(img1, img2, H):
     
